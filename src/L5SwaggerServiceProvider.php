@@ -32,8 +32,9 @@ class L5SwaggerServiceProvider extends ServiceProvider
         ], 'views');
 
         //Include routes
-
-        \Route::group(['namespace' => 'L5Swagger'], function ($router) {
+    
+        $router = $this->app['router'];
+        $router->group(['namespace' => 'L5Swagger'], function ($router) {
             require __DIR__.'/routes.php';
         });
     }

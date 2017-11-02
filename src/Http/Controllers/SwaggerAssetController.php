@@ -7,7 +7,11 @@ use Illuminate\Routing\Controller as BaseController;
 
 class SwaggerAssetController extends BaseController
 {
-    public function index($asset)
+    /**
+     * @param string $asset
+     * @return Response
+     */
+    public function index(string $asset): Response
     {
         $path = swagger_ui_dist_path($asset);
 

@@ -2,24 +2,35 @@
 
 namespace L5Swagger;
 
-use File;
-use Config;
+use Illuminate\Filesystem\Filesystem;
 
 class Generator
 {
+    /** @var Filesystem  */
+    private static $file;
+    
+    /**
+     * Generator constructor.
+     * @param Filesystem $file
+     */
+    public function __construct(Filesystem $file)
+    {
+        $this->file = $file;
+    }
+    
     public static function generateDocs()
     {
         $appDir = config('l5-swagger.paths.annotations');
         $docDir = config('l5-swagger.paths.docs');
-        if (! File::exists($docDir) || is_writable($docDir)) {
+        if (! self::$file->exists($docDir) || is_writable($docDir)) {
             // delete all existing documentation
-            if (File::exists($docDir)) {
-                File::deleteDirectory($docDir);
+            if (self::$file->exists($docDir)) {
+                self::$file->deleteDirectory($docDir);
             }
 
             self::defineConstants(config('l5-swagger.constants') ?: []);
-
-            File::makeDirectory($docDir);
+    
+            self::$file->makeDirectory($docDir);
             $excludeDirs = config('l5-swagger.paths.excludes');
             $swagger = \Swagger\scan($appDir, ['exclude' => $excludeDirs]);
 
