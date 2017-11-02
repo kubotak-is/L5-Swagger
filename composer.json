@@ -1,5 +1,5 @@
 {
-  "name": "darkaonline/l5-swagger",
+  "name": "kubotak-is/l5-swagger",
   "description": "Swagger integration to Laravel 5",
   "keywords": [
     "laravel",
@@ -11,6 +11,10 @@
     {
       "name": "Darius Matulionis",
       "email": "darius@matulionis.lt"
+    },
+    {
+      "name": "Kenjiro Kubota",
+      "email": "kubotak@istyle.co.jp"
     }
   ],
   "require": {
