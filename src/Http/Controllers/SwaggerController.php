@@ -20,17 +20,27 @@ class SwaggerController extends BaseController
     /** @var ResponseFactory  */
     private $response;
     
+    /** @var Generator  */
+    private $generator;
+    
     /**
      * SwaggerController constructor.
      * @param Filesystem      $filesystem
      * @param Request         $request
      * @param ResponseFactory $responseFactory
+     * @param Generator       $generator
      */
-    public function __construct(Filesystem $filesystem, Request $request, ResponseFactory $responseFactory)
+    public function __construct(
+        Filesystem $filesystem,
+        Request $request,
+        ResponseFactory $responseFactory,
+        Generator $generator
+    )
     {
-        $this->file     = $filesystem;
-        $this->request  = $request;
-        $this->response = $responseFactory;
+        $this->file      = $filesystem;
+        $this->request   = $request;
+        $this->response  = $responseFactory;
+        $this->generator = $generator;
     }
     
     /**
@@ -64,7 +74,7 @@ class SwaggerController extends BaseController
     public function api()
     {
         if (config('l5-swagger.generate_always')) {
-            Generator::generateDocs();
+            $this->generator->generateDocs();
         }
 
         if (config('l5-swagger.proxy')) {

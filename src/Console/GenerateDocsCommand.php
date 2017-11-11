@@ -29,6 +29,7 @@ class GenerateDocsCommand extends Command
     public function handle()
     {
         $this->info('Regenerating docs');
-        Generator::generateDocs();
+        $generator = app()->make(Generator::class);
+        $generator->generateDocs();
     }
 }

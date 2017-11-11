@@ -7,7 +7,7 @@ use Illuminate\Filesystem\Filesystem;
 class Generator
 {
     /** @var Filesystem  */
-    private static $file;
+    private $file;
     
     /**
      * Generator constructor.
@@ -18,34 +18,34 @@ class Generator
         $this->file = $file;
     }
     
-    public static function generateDocs()
+    public function generateDocs()
     {
         $appDir = config('l5-swagger.paths.annotations');
         $docDir = config('l5-swagger.paths.docs');
-        if (! self::$file->exists($docDir) || is_writable($docDir)) {
+        if (! $this->file->exists($docDir) || is_writable($docDir)) {
             // delete all existing documentation
-            if (self::$file->exists($docDir)) {
-                self::$file->deleteDirectory($docDir);
+            if ($this->file->exists($docDir)) {
+                $this->file->deleteDirectory($docDir);
             }
-
-            self::defineConstants(config('l5-swagger.constants') ?: []);
-    
-            self::$file->makeDirectory($docDir);
+            
+            $this->defineConstants(config('l5-swagger.constants') ?: []);
+            
+            $this->file->makeDirectory($docDir);
             $excludeDirs = config('l5-swagger.paths.excludes');
             $swagger = \Swagger\scan($appDir, ['exclude' => $excludeDirs]);
-
+            
             if (config('l5-swagger.paths.base') !== null) {
                 $swagger->basePath = config('l5-swagger.paths.base');
             }
-
+            
             $filename = $docDir.'/'.config('l5-swagger.paths.docs_json', 'api-docs.json');
             $swagger->saveAs($filename);
-
+            
             self::appendSecurityDefinisions($filename);
         }
     }
-
-    protected static function defineConstants(array $constants)
+    
+    protected function defineConstants(array $constants)
     {
         if (! empty($constants)) {
             foreach ($constants as $key => $value) {
@@ -53,29 +53,29 @@ class Generator
             }
         }
     }
-
-    protected static function appendSecurityDefinisions(string $filename)
+    
+    protected function appendSecurityDefinisions(string $filename)
     {
         $securityConfig = config('l5-swagger.security', []);
-
+        
         if (is_array($securityConfig) && ! empty($securityConfig)) {
             $documentation = collect(
                 json_decode(file_get_contents($filename))
             );
-
+            
             $securityDefinitions = $documentation->has('securityDefinitions') ? collect($documentation->get('securityDefinitions')) : collect();
-
+            
             foreach ($securityConfig as $key => $cfg) {
-                $securityDefinitions->offsetSet($key, self::arrayToObject($cfg));
+                $securityDefinitions->offsetSet($key, $this->arrayToObject($cfg));
             }
-
+            
             $documentation->offsetSet('securityDefinitions', $securityDefinitions);
-
+            
             file_put_contents($filename, $documentation->toJson());
         }
     }
-
-    public static function arrayToObject($array)
+    
+    public function arrayToObject($array)
     {
         return json_decode(json_encode($array));
     }
